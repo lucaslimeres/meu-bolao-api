@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { db } from '../../database/connection';
-import { ChampionshipRepository } from '@/infrastructure/database/mysql/championship-repository';
+import { ChampionshipRepository } from '@/infrastructure/database/mysql';
 import { CreateChampionshipUseCase } from '@/application/use-cases';
 
 export class ChampionshipController {

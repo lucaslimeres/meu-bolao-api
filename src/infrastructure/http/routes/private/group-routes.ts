@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { GroupController } from '../../controllers/group-controller';
+import { GroupController } from '../../controllers';
 import { authenticate } from '../../middlewares/auth-middleware';
 
 const groupController = new GroupController();

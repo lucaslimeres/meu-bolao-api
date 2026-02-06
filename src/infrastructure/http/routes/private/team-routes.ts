@@ -10,5 +10,5 @@ export async function teamRoutes(app: FastifyInstance) {
 
   // Equipes
   app.post('/', teamController.createTeam);
-  app.get('/:championshipId', teamController.listTeamsByChampionship);
+  app.get('/championship/:championshipId', teamController.listTeamsByChampionship);
 }

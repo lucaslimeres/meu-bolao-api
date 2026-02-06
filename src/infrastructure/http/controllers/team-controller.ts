@@ -25,9 +25,7 @@ export class TeamController {
   }
 
   async listTeamsByChampionship(request: FastifyRequest, reply: FastifyReply) {
-    console.log({ params: request.params, query: request.query });
     const { championshipId } = request.params as { championshipId: string };
-    console.log({ championshipId });
     const repo = new TeamRepository(db);
     
     const list = await repo.listByChampionship(Number(championshipId));

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { authenticate, checkAdmin } from '../../middlewares/auth-middleware';
-import { ChampionshipController } from '../../controllers/championship-controller';
+import { ChampionshipController } from '../../controllers';
 
 const championshipController = new ChampionshipController();
 
