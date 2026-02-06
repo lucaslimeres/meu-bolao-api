@@ -7,7 +7,7 @@ interface CreateGroupRequest {
   championshipId: number;
   title: string;
   privacyType: PrivacyType;
-  entryDeadline: string;
+  entryDeadline: Date;
   maxMembers: number;
   entryFee: number;
   hasPrize: boolean;
@@ -26,7 +26,7 @@ export class CreateGroupUseCase {
       title: data.title,
       inviteCode,
       privacyType: data.privacyType,
-      entryDeadline: new Date(data.entryDeadline),
+      entryDeadline: data.entryDeadline,
       maxMembers: data.maxMembers,
       entryFee: data.entryFee,
       hasPrize: data.hasPrize

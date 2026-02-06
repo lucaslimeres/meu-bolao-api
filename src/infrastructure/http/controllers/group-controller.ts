@@ -1,7 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { z } from 'zod';
 import { db } from '../../database/connection';
 import { GroupRepository } from '@/infrastructure/database/mysql';
 import { CreateGroupUseCase } from '@/application/use-cases';
+import { createGroupSchema } from '@/application/schemas';
 
 export class GroupController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -10,10 +12,14 @@ export class GroupController {
     const user = request.user as { id: string };
 
     try {
-      const data = { ...(request.body as any), ownerId: user.id };
+      const validatedData = createGroupSchema.parse(request.body);
+  
+      const data = { ...validatedData, ownerId: user.id };
       const group = await useCase.execute(data);
       return reply.status(201).send(group);
     } catch (error: any) {
+      if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
+      
       return reply.status(400).send({ message: error.message });
     }
   }

@@ -6,7 +6,7 @@ interface CreateMatchRequest {
   championshipId: number;
   homeTeamId: number;
   awayTeamId: number;
-  matchDate: string;
+  matchDate: Date;
 }
 
 export class CreateMatchUseCase {
@@ -30,7 +30,7 @@ export class CreateMatchUseCase {
       championshipId,
       homeTeamId,
       awayTeamId,
-      matchDate: new Date(matchDate),
+      matchDate,
       homeScore: 0,
       awayScore: 0,
       status: 'scheduled'
