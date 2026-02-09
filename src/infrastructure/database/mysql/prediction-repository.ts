@@ -46,4 +46,22 @@ export class PredictionRepository implements IPredictionRepository {
       .first();
     return !!row;
   }
+
+  async listByMatch(matchId: number): Promise<Prediction[]> {
+    const rows = await this.db("predictions").where({ match_id: matchId });
+    return rows.map(row => new Prediction({
+      userId: row.user_id,
+      groupId: row.group_id,
+      matchId: row.match_id,
+      homeGuess: row.home_guess,
+      awayGuess: row.away_guess,
+      pointsEarned: row.points_earned
+    }, row.id));
+  }
+
+  async updatePoints(predictionId: number, points: number): Promise<void> {
+    await this.db("predictions")
+      .where({ id: predictionId })
+      .update({ points_earned: points });
+  }  
 }

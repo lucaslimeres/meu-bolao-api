@@ -2,12 +2,13 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import { authRoutes, championshipRoutes, groupRoutes, matchRoutes, predictionRoutes, privateUserRoutes, publicUserRoutes, teamRoutes } from './routes';
+import { ENVS } from '@/utils';
 
 const app = fastify({ logger: true });
 
 app.register(cors);
 app.register(jwt, { 
-  secret: process.env.JWT_SECRET || 'meu-bolao-secret-key' 
+  secret: ENVS.CONFIG.JWT_SECRET || 'meu-bolao-secret-key' 
 });
 
 app.register(authRoutes, { prefix: '/auth' });

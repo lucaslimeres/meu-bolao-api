@@ -1,9 +1,9 @@
-import 'dotenv/config';
 import { app } from './infrastructure/http/app';
+import { ENVS } from './utils';
 
 const start = async () => {
   try {
-    const port = Number(process.env.PORT) || 3000;
+    const port = Number(ENVS.CONFIG.PORT) || 3000;
     
     await app.listen({ 
       port, 

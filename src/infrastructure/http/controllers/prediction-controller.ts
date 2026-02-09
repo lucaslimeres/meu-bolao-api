@@ -2,8 +2,8 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { db } from '../../database/connection';
 import { MatchRepository, PredictionRepository } from '@/infrastructure/database/mysql';
-import { CreatePredictionUseCase } from '@/application/use-cases';
-import { createPredictionSchema } from '@/application/schemas';
+import { CreatePredictionUseCase, UpdateMatchResultUseCase } from '@/application/use-cases';
+import { createPredictionSchema, updateMatchResultSchema } from '@/application/schemas';
 
 export class PredictionController {
   async create(request: FastifyRequest, reply: FastifyReply) {

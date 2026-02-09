@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { db } from '../../database/connection';
-import { MatchRepository } from '@/infrastructure/database/mysql';
-import { CreateMatchUseCase } from '@/application/use-cases';
-import { createMatchSchema, listTeamSchema } from '@/application/schemas';
+import { MatchRepository, PredictionRepository } from '@/infrastructure/database/mysql';
+import { CreateMatchUseCase, UpdateMatchResultUseCase } from '@/application/use-cases';
+import { createMatchSchema, listTeamSchema, updateMatchResultSchema } from '@/application/schemas';
 
 export class MatchController {
   async createMatch(request: FastifyRequest, reply: FastifyReply) {
@@ -38,4 +38,25 @@ export class MatchController {
       return reply.status(400).send({ message: error.message });
     }
   }
+
+  async update(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const requestValidation = { ...request.body as object, ...request.params as object };
+      const data = updateMatchResultSchema.parse(requestValidation);
+
+      const predictionRepo = new PredictionRepository(db);
+      const matchRepo = new MatchRepository(db);
+      const useCase = new UpdateMatchResultUseCase(matchRepo, predictionRepo);
+
+      const result = await useCase.execute({
+        ...data
+      });
+
+      return reply.status(201).send(result);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
+
+      return reply.status(400).send({ message: error.message });
+    }
+  }    
 }
