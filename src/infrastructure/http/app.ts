@@ -11,14 +11,19 @@ app.register(jwt, {
   secret: ENVS.CONFIG.JWT_SECRET || 'meu-bolao-secret-key' 
 });
 
+// PUBLICS ROUTES
 app.register(authRoutes, { prefix: '/auth' });
-app.register(privateUserRoutes, { prefix: '/users' });
 app.register(publicUserRoutes, { prefix: '/users' });
+
+// PRIVATE ROUTES
+app.register(groupRoutes, { prefix: '/groups' });
+app.register(predictionRoutes, { prefix: '/predictions' });
+
+// ADMIN ROUTES
+app.register(privateUserRoutes, { prefix: '/users' });
 app.register(championshipRoutes, { prefix: '/championships' });
 app.register(teamRoutes, { prefix: '/teams' });
-app.register(groupRoutes, { prefix: '/groups' });
 app.register(matchRoutes, { prefix: '/matches' });
-app.register(predictionRoutes, { prefix: '/predictions' });
 
 app.get('/health', async () => {
   return { status: 'OK', timestamp: new Date().toISOString() };

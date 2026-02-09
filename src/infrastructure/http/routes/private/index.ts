@@ -1,6 +1,2 @@
-export * from './user-routes'
-export * from './championship-routes'
 export * from './group-routes'
-export * from './team-routes'
-export * from './match-routes'
 export * from './prediction-routes'
