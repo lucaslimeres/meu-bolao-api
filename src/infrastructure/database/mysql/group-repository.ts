@@ -52,6 +52,24 @@ export class GroupRepository implements IGroupRepository {
     return rows.map(this.mapToEntity);
   }
 
+  async addMember(groupId: string, userId: string, paid: boolean): Promise<void> {
+    await this.db("group_members").insert({
+      group_id: groupId,
+      user_id: userId,
+      paid: paid,
+      joined_at: new Date()
+    });
+  }
+
+  async countMembers(groupId: string): Promise<number> {
+    const result = await this.db("group_members")
+      .where({ group_id: groupId })
+      .count("user_id as count")
+      .first();
+    
+    return Number(result?.count || 0);
+  }  
+
   private mapToEntity(row: any): Group {
     return new Group({
       ownerId: row.owner_id,

@@ -6,4 +6,6 @@ export interface IGroupRepository {
   findByInviteCode(code: string): Promise<Group | null>;
   listPublic(): Promise<Group[]>;
   listByUser(userId: string): Promise<Group[]>;
+  addMember(groupId: string, userId: string, paid: boolean): Promise<void>;
+  countMembers(groupId: string): Promise<number>;
 }
