@@ -3,3 +3,4 @@ export * from './team-repository';
 export * from './championship-repository';
 export * from './group-repository';
 export * from './match-repository';
+export * from './prediction-repository';
