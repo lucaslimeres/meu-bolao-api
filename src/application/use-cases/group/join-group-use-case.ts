@@ -43,7 +43,13 @@ export class JoinGroupUseCase {
       throw new Error("Você já faz parte deste grupo.");
     }
 
-    // 5. Validar Financeiro (Entry Fee)
+    // 5. Validar Limite de Membros
+    const currentMembersCount = await this.groupRepository.countMembers(group.id);
+    if (currentMembersCount >= group.maxMembers) {
+      throw new Error("O limite máximo de participantes para este grupo foi atingido.");
+    }    
+
+    // 6. Validar Financeiro (Entry Fee)
     if (group.entryFee > 0) {
       const balance = await this.walletRepository.getBalance(userId);
       
@@ -62,9 +68,8 @@ export class JoinGroupUseCase {
       });
     }
 
-    // 6. Adicionar Membro (Aqui usamos o repositório de grupo modificado)
-    // Nota: Adicionaremos um método 'addMember' ao IGroupRepository
-    await (this.groupRepository as any).addMember(group.id, userId, group.entryFee > 0);
+    // 7. Adicionar Membro (Aqui usamos o repositório de grupo modificado)
+    await this.groupRepository.addMember(group.id, userId, group.entryFee > 0);
 
     return { message: "Entrada no grupo confirmada!", groupId: group.id };
   }
