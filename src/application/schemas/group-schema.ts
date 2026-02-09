@@ -9,3 +9,10 @@ export const createGroupSchema = z.object({
   entryFee: z.coerce.number().positive().min(0),
   hasPrize: z.coerce.boolean(),
 });
+
+export const joinGroupSchema = z.object({
+  groupId: z.uuid().optional(),
+  inviteCode: z.string().optional(),
+}).refine(data => data.groupId || data.inviteCode, {
+  message: "É necessário fornecer o ID do grupo ou o código de convite."
+});
