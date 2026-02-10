@@ -1,4 +1,4 @@
-import { Championship } from "@/domain/entities/championship";
+import { Championship, ChampionshipStatus } from "@/domain/entities/championship";
 import { IChampionshipRepository } from "@/domain/repositories";
 import { Knex } from "knex";
 
@@ -9,7 +9,8 @@ export class ChampionshipRepository implements IChampionshipRepository {
     await this.db("championships").insert({
       title: championship.title,
       description: championship.description,
-      is_active: championship.isActive
+      is_active: championship.isActive,
+      status: championship.status
     });
   }
 
@@ -19,7 +20,8 @@ export class ChampionshipRepository implements IChampionshipRepository {
     return new Championship({
       title: row.title,
       description: row.description,
-      isActive: row.is_active
+      isActive: Boolean(row.is_active),
+      status: row.status as ChampionshipStatus
     }, row.id);
   }
 
@@ -28,7 +30,24 @@ export class ChampionshipRepository implements IChampionshipRepository {
     return rows.map(row => new Championship({
       title: row.title,
       description: row.description,
-      isActive: row.is_active
+      isActive: Boolean(row.is_active),
+      status: row.status as ChampionshipStatus
     }, row.id));
+  }
+
+  async updateStatus(id: number, status: ChampionshipStatus): Promise<void> {
+    await this.db("championships").where({ id }).update({ 
+      status,
+      is_active: status === 'active'
+    });
+  }
+
+  async hasPendingMatches(id: number): Promise<boolean> {
+    const row = await this.db("matches")
+      .where({ championship_id: id })
+      .whereNot({ status: 'finished' })
+      .first();
+    
+    return !!row;
   }
 }

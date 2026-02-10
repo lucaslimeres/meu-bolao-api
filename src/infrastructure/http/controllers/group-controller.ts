@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { db } from '../../database/connection';
 import { GroupRepository, MatchRepository, PredictionRepository, WalletRepository } from '@/infrastructure/database/mysql';
 import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase, ListGroupMatchesUseCase } from '@/application/use-cases';
-import { createGroupSchema, joinGroupSchema, groupIdSchema } from '@/application/schemas';
+import { createGroupSchema, joinGroupSchema, groupIdParamsSchema } from '@/application/schemas';
 import { ListGroupMembersUseCase } from '@/application/use-cases/group/list-group-members-use-case';
 import { KnexGroupPrizeRepository } from '@/infrastructure/database/mysql/group-prize-repositpory';
 
@@ -64,7 +64,7 @@ export class GroupController {
 
   async getRanking(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { groupId } = groupIdSchema.parse(request.params);
+      const { groupId } = groupIdParamsSchema.parse(request.params);
       const user = request.user as { id: string };
 
       const predictionRepo = new PredictionRepository(db);
@@ -86,7 +86,7 @@ export class GroupController {
 
   async getMatches(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { groupId } = groupIdSchema.parse(request.params);
+      const { groupId } = groupIdParamsSchema.parse(request.params);
       const user = request.user as { id: string };
 
       const matchRepo = new MatchRepository(db);
@@ -109,7 +109,7 @@ export class GroupController {
 
   async listMembers(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { groupId } = groupIdSchema.parse(request.params);
+      const { groupId } = groupIdParamsSchema.parse(request.params);
       const user = request.user as { id: string };
 
       const groupRepo = new GroupRepository(db);

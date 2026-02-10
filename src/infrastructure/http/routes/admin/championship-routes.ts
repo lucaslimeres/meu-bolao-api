@@ -11,4 +11,5 @@ export async function championshipRoutes(app: FastifyInstance) {
 
   app.post('/', championshipController.createChampionship);
   app.get('/', championshipController.listChampionships);
+  app.post('/:id/finish', championshipController.finishChampionship);
 }
