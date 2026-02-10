@@ -11,5 +11,5 @@ export async function matchRoutes(app: FastifyInstance) {
 
   app.post('/', matchController.createMatch);
   app.get('/championship/:championshipId', matchController.listMatches);
-  app.patch('/match/:matchId/result', matchController.update);
+  app.patch('/:matchId/result', matchController.update);
 }

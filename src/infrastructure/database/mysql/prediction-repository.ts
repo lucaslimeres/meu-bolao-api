@@ -63,5 +63,30 @@ export class PredictionRepository implements IPredictionRepository {
     await this.db("predictions")
       .where({ id: predictionId })
       .update({ points_earned: points });
-  }  
+  }
+
+  async getGroupRanking(groupId: string) {
+    // Query complexa para somar pontos e contar acertos exatos (10 pontos)
+    const rows = await this.db("predictions as p")
+      .join("users as u", "p.user_id", "u.id")
+      .where("p.group_id", groupId)
+      .select(
+        "u.id as userId",
+        "u.name as userName",
+      )
+      .sum("p.points_earned as totalPoints")
+      .count("p.id as totalPredictions")
+      // Contagem de placares exatos (opcional para critério de desempate)
+      .select(this.db.raw("SUM(CASE WHEN p.points_earned = 10 THEN 1 ELSE 0 END) as exactScores"))
+      .groupBy("u.id", "u.name")
+      .orderBy("totalPoints", "desc")
+      .orderBy("exactScores", "desc");
+
+    return rows.map(row => ({
+      userId: row.userId,
+      userName: row.userName,
+      totalPoints: Number(row.totalPoints || 0),
+      exactScores: Number(row.exactScores || 0)
+    }));
+  }
 }

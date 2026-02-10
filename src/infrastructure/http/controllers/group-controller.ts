@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { db } from '../../database/connection';
-import { GroupRepository, WalletRepository } from '@/infrastructure/database/mysql';
-import { CreateGroupUseCase, JoinGroupUseCase } from '@/application/use-cases';
-import { createGroupSchema, joinGroupSchema } from '@/application/schemas';
+import { GroupRepository, PredictionRepository, WalletRepository } from '@/infrastructure/database/mysql';
+import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase } from '@/application/use-cases';
+import { createGroupSchema, joinGroupSchema, getGroupRankingSchema } from '@/application/schemas';
 
 export class GroupController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -52,6 +52,28 @@ export class GroupController {
       });
 
       return reply.status(200).send(result);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
+      
+      return reply.status(400).send({ message: error.message });
+    }
+  }  
+
+  async getRanking(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { groupId } = getGroupRankingSchema.parse(request.params);
+      const user = request.user as { id: string };
+
+      const predictionRepo = new PredictionRepository(db);
+      const groupRepo = new GroupRepository(db);
+      const useCase = new GetGroupRankingUseCase(predictionRepo, groupRepo);
+
+      const ranking = await useCase.execute({
+        groupId,
+        userId: user.id
+      });
+
+      return reply.status(200).send(ranking);
     } catch (error: any) {
       if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
       
