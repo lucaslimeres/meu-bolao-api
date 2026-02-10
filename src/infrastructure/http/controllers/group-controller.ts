@@ -5,11 +5,13 @@ import { GroupRepository, MatchRepository, PredictionRepository, WalletRepositor
 import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase, ListGroupMatchesUseCase } from '@/application/use-cases';
 import { createGroupSchema, joinGroupSchema, groupIdSchema } from '@/application/schemas';
 import { ListGroupMembersUseCase } from '@/application/use-cases/group/list-group-members-use-case';
+import { KnexGroupPrizeRepository } from '@/infrastructure/database/mysql/group-prize-repositpory';
 
 export class GroupController {
   async create(request: FastifyRequest, reply: FastifyReply) {
-    const repo = new GroupRepository(db);
-    const useCase = new CreateGroupUseCase(repo);
+    const groupRepo = new GroupRepository(db);
+    const prizeRepo = new KnexGroupPrizeRepository(db);
+    const useCase = new CreateGroupUseCase(groupRepo, prizeRepo);
     const user = request.user as { id: string };
 
     try {

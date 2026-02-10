@@ -18,5 +18,9 @@ export const ENVS = {
     WINNER_AND_GOAL_DIFF: Number(process.env.WINNER_AND_GOAL_DIFFERENCE_POINTS) || 7,
     WINNER_ONLY: Number(process.env.WINNER_ONLY_POINTS) || 5,
     ONE_TEAM_GOALS: Number(process.env.ONE_TEAM_GOALS_POINTS) || 2
+  },
+
+  PRIZES: {
+    TOTAL: Number(process.env.TOTAL_PRIZE) || 100,
   }
 }
