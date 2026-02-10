@@ -12,4 +12,6 @@ export async function groupRoutes(app: FastifyInstance) {
   app.get('/me', groupController.listMyGroups);
   app.post('/join', groupController.join);
   app.get('/:groupId/ranking', groupController.getRanking);
+  app.get('/:groupId/matches', groupController.getMatches);
+  app.get('/:groupId/members', groupController.listMembers);
 }

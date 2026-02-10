@@ -58,5 +58,5 @@ export class MatchController {
 
       return reply.status(400).send({ message: error.message });
     }
-  }    
+  }
 }

@@ -7,4 +7,9 @@ export interface IMatchRepository {
   updateResult(matchId: number, homeScore: number, awayScore: number): Promise<void>;
   // Verifica se a equipa pertence ao campeonato
   isTeamInChampionship(teamId: number, championshipId: number): Promise<boolean>;
+  listWithUserPredictions(
+    championshipId: number,
+    groupId: string,
+    userId: string
+  ): Promise<any[]>;
 }

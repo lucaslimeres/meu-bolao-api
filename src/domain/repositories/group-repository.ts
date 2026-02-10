@@ -8,4 +8,10 @@ export interface IGroupRepository {
   listByUser(userId: string): Promise<Group[]>;
   addMember(groupId: string, userId: string, paid: boolean): Promise<void>;
   countMembers(groupId: string): Promise<number>;
+  isUserInGroup(userId: string, groupId: string): Promise<boolean>;
+  listMembers(groupId: string): Promise<{
+    id: string;
+    name: string;
+    joinedAt: Date;
+  }[]>;
 }

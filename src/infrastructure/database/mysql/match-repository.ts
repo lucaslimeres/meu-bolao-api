@@ -42,6 +42,39 @@ export class MatchRepository implements IMatchRepository {
     }, row.id));
   }
 
+  async listWithUserPredictions(championshipId: number, groupId: string, userId: string): Promise<any[]> {
+    // LEFT JOIN para trazer a partida mesmo que o utilizador ainda não tenha palpitado
+    const rawGroupId = this.db.raw("?", [groupId]);
+    const rawUserId = this.db.raw("?", [userId]);
+
+    const rows = await this.db("matches as m")
+      .leftJoin("predictions as p", function() {
+        this.on("m.id", "=", "p.match_id")
+          .andOn("p.group_id", "=", rawGroupId)
+          .andOn("p.user_id", "=", rawUserId);
+      })
+      .join("teams as h", "m.home_team_id", "h.id")
+      .join("teams as a", "m.away_team_id", "a.id")
+      .where("m.championship_id", championshipId)
+      .select(
+        "m.id",
+        "m.match_date",
+        "m.status",
+        "m.home_score",
+        "m.away_score",
+        "h.name as home_team_name",
+        "h.badge_url as home_team_badge",
+        "a.name as away_team_name",
+        "a.badge_url as away_team_badge",
+        "p.home_guess",
+        "p.away_guess",
+        "p.points_earned"
+      )
+      .orderBy("m.match_date", "asc");
+
+    return rows;
+  }
+
   async updateResult(matchId: number, homeScore: number, awayScore: number): Promise<void> {
     await this.db("matches").where({ id: matchId }).update({
       home_score: homeScore,

@@ -17,6 +17,6 @@ export const joinGroupSchema = z.object({
   message: "É necessário fornecer o ID do grupo ou o código de convite."
 });
 
-export const getGroupRankingSchema = z.object({
+export const groupIdSchema = z.object({
   groupId: z.uuid("ID do grupo inválido")
 });

@@ -68,7 +68,28 @@ export class GroupRepository implements IGroupRepository {
       .first();
     
     return Number(result?.count || 0);
-  }  
+  }
+  
+  async isUserInGroup(userId: string, groupId: string): Promise<boolean> {
+    const row = await this.db("group_members")
+      .where({ user_id: userId, group_id: groupId })
+      .first();
+    return !!row;
+  }
+
+  async listMembers(groupId: string) {
+    const rows = await this.db("group_members as gm")
+      .join("users as u", "gm.user_id", "u.id")
+      .where("gm.group_id", groupId)
+      .select("u.id", "u.name", "gm.joined_at")
+      .orderBy("gm.joined_at", "asc");
+
+    return rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      joinedAt: row.joined_at
+    }));
+  }
 
   private mapToEntity(row: any): Group {
     return new Group({

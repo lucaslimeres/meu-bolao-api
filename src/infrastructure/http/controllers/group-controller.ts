@@ -1,9 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { db } from '../../database/connection';
-import { GroupRepository, PredictionRepository, WalletRepository } from '@/infrastructure/database/mysql';
-import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase } from '@/application/use-cases';
-import { createGroupSchema, joinGroupSchema, getGroupRankingSchema } from '@/application/schemas';
+import { GroupRepository, MatchRepository, PredictionRepository, WalletRepository } from '@/infrastructure/database/mysql';
+import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase, ListGroupMatchesUseCase } from '@/application/use-cases';
+import { createGroupSchema, joinGroupSchema, groupIdSchema } from '@/application/schemas';
+import { ListGroupMembersUseCase } from '@/application/use-cases/group/list-group-members-use-case';
 
 export class GroupController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -61,7 +62,7 @@ export class GroupController {
 
   async getRanking(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { groupId } = getGroupRankingSchema.parse(request.params);
+      const { groupId } = groupIdSchema.parse(request.params);
       const user = request.user as { id: string };
 
       const predictionRepo = new PredictionRepository(db);
@@ -79,5 +80,49 @@ export class GroupController {
       
       return reply.status(400).send({ message: error.message });
     }
-  }  
+  }
+
+  async getMatches(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { groupId } = groupIdSchema.parse(request.params);
+      const user = request.user as { id: string };
+
+      const matchRepo = new MatchRepository(db);
+      const groupRepo = new GroupRepository(db);
+      const predictionRepo = new PredictionRepository(db);
+      const useCase = new ListGroupMatchesUseCase(matchRepo, groupRepo, predictionRepo);
+
+      const matches = await useCase.execute({
+        groupId,
+        userId: user.id
+      });
+
+      return reply.status(200).send(matches);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
+
+      return reply.status(400).send({ message: error.message });
+    }
+  }
+
+  async listMembers(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { groupId } = groupIdSchema.parse(request.params);
+      const user = request.user as { id: string };
+
+      const groupRepo = new GroupRepository(db);
+      const useCase = new ListGroupMembersUseCase(groupRepo);
+
+      const members = await useCase.execute({
+        groupId,
+        userId: user.id
+      });
+
+      return reply.status(200).send(members);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
+
+      return reply.status(400).send({ message: error.message });
+    }
+  }
 }
