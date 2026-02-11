@@ -6,4 +6,6 @@ export interface IUserRepository {
     findById(id: string): Promise<User | null>;
     isAdmin(userId: string): Promise<boolean>;
     promoteToAdmin(userId: string, level: 'super_admin' | 'moderator'): Promise<void>;
+    findAll(): Promise<User[]>;
+    updateStatus(userId: string, isActive: boolean): Promise<void>;
 }

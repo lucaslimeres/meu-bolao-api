@@ -91,6 +91,26 @@ export class GroupRepository implements IGroupRepository {
     }));
   }
 
+  async listAll(): Promise<any[]> {
+    return await this.db("groups as g")
+      .join("users as u", "g.owner_id", "u.id")
+      .join("championships as c", "g.championship_id", "c.id")
+      .leftJoin("group_members as gm", "g.id", "gm.group_id")
+      .select(
+        "g.*",
+        "u.name as owner_name",
+        "c.title as championship_title"
+      )
+      .count("gm.user_id as current_members")
+      .groupBy("g.id", "u.id", "c.id")
+      .orderBy("g.entry_deadline", "desc");
+  }
+
+  async updateStatus(groupId: string, isActive: boolean): Promise<void> {
+    await this.db("groups").where({ id: groupId }).update({ is_active: isActive });
+  }
+
+  // Helper de mapeamento atualizado
   private mapToEntity(row: any): Group {
     return new Group({
       ownerId: row.owner_id,
@@ -98,10 +118,10 @@ export class GroupRepository implements IGroupRepository {
       title: row.title,
       inviteCode: row.invite_code,
       privacyType: row.privacy_type,
-      entryDeadline: row.entry_deadline,
+      entryDeadline: new Date(row.entry_deadline),
       maxMembers: row.max_members,
-      entryFee: row.entry_fee,
-      hasPrize: row.has_prize
-    }, row.id);
+      entryFee: Number(row.entry_fee),
+      hasPrize: Boolean(row.has_prize)
+    }, row.id, Boolean(row.is_active));
   }
 }

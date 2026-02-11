@@ -5,3 +5,4 @@ export * from './team';
 export * from './group';
 export * from './match';
 export * from './prediction';
+export * from './audit-log';

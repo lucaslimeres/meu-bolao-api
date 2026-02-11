@@ -11,8 +11,9 @@ export class Group {
   public maxMembers: number;
   public entryFee: number;
   public hasPrize: boolean;
+  public isActive: boolean;
 
-  constructor(props: Omit<Group, "id">, id: string) {
+  constructor(props: Omit<Group, "id" | "isActive">, id: string, isActive?: boolean) {
     this.id = id;
     this.ownerId = props.ownerId;
     this.championshipId = props.championshipId;
@@ -23,5 +24,6 @@ export class Group {
     this.maxMembers = props.maxMembers;
     this.entryFee = props.entryFee;
     this.hasPrize = props.hasPrize;
+    this.isActive = isActive ?? true;
   }
 }

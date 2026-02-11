@@ -4,7 +4,7 @@ import { authenticate } from '../../middlewares/auth-middleware';
 
 const predictionController = new PredictionController();
 
-export async function predictionRoutes(app: FastifyInstance) {
+export async function privatePredictionRoutes(app: FastifyInstance) {
   // Todas as rotas de palpites exigem estar logado
   app.addHook('preHandler', authenticate);
 

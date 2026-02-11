@@ -4,6 +4,7 @@ import { db } from '../../database/connection';
 import { MatchRepository, PredictionRepository } from '@/infrastructure/database/mysql';
 import { CreateMatchUseCase, UpdateMatchResultUseCase } from '@/application/use-cases';
 import { createMatchSchema, listTeamSchema, updateMatchResultSchema } from '@/application/schemas';
+import { logAction } from '../middlewares/log-action-middleware';
 
 export class MatchController {
   async createMatch(request: FastifyRequest, reply: FastifyReply) {
@@ -15,6 +16,10 @@ export class MatchController {
   
       const data = validatedData;
       const match = await useCase.execute(data);
+
+      const user = request.user as { id: string };
+      await logAction(user.id, `Criou a partida ID ${match.id}`);
+
       return reply.status(201).send(match);
     } catch (error: any) {
       if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
@@ -51,6 +56,9 @@ export class MatchController {
       const result = await useCase.execute({
         ...data
       });
+
+      const user = request.user as { id: string };
+      await logAction(user.id, `Atualizou o resultado da partida ID ${data.matchId}`);
 
       return reply.status(201).send(result);
     } catch (error: any) {

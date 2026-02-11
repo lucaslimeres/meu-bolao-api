@@ -7,6 +7,11 @@ export const createUserSchema = z.object({
 });
 
 export const promoteUserSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
   level: z.enum(['moderator', 'super_admin'], "Nível inválido"),
+});
+
+export const toggleUserStatusSchema = z.object({
+  userId: z.uuid("ID de utilizador inválido"),
+  isActive: z.boolean("O estado (isActive) é obrigatório"),
 });

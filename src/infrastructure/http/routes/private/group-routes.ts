@@ -4,7 +4,7 @@ import { authenticate } from '../../middlewares/auth-middleware';
 
 const groupController = new GroupController();
 
-export async function groupRoutes(app: FastifyInstance) {
+export async function privateGroupRoutes(app: FastifyInstance) {
   app.addHook('preHandler', authenticate);
 
   app.post('/', groupController.create);

@@ -1,16 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { db } from '../../database/connection';
-import { GroupRepository, MatchRepository, PredictionRepository, WalletRepository } from '@/infrastructure/database/mysql';
-import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase, ListGroupMatchesUseCase } from '@/application/use-cases';
-import { createGroupSchema, joinGroupSchema, groupIdParamsSchema } from '@/application/schemas';
-import { ListGroupMembersUseCase } from '@/application/use-cases/group/list-group-members-use-case';
-import { KnexGroupPrizeRepository } from '@/infrastructure/database/mysql/group-prize-repositpory';
+import { GroupPrizeRepository, GroupRepository, MatchRepository, PredictionRepository, WalletRepository } from '@/infrastructure/database/mysql';
+import { CreateGroupUseCase, GetGroupRankingUseCase, JoinGroupUseCase, ListAllGroupsUseCase, ListGroupMatchesUseCase, ListGroupMembersUseCase, ToggleGroupStatusUseCase } from '@/application/use-cases';
+import { createGroupSchema, joinGroupSchema, groupIdParamsSchema, toggleGroupStatusSchema } from '@/application/schemas';
+import { logAction } from '../middlewares/log-action-middleware';
 
 export class GroupController {
   async create(request: FastifyRequest, reply: FastifyReply) {
     const groupRepo = new GroupRepository(db);
-    const prizeRepo = new KnexGroupPrizeRepository(db);
+    const prizeRepo = new GroupPrizeRepository(db);
     const useCase = new CreateGroupUseCase(groupRepo, prizeRepo);
     const user = request.user as { id: string };
 
@@ -127,4 +126,35 @@ export class GroupController {
       return reply.status(400).send({ message: error.message });
     }
   }
+
+  async listGroups(request: FastifyRequest, reply: FastifyReply) {
+    const repo = new GroupRepository(db);
+    const useCase = new ListAllGroupsUseCase(repo);
+
+    try {
+      const groups = await useCase.execute();
+      return reply.status(200).send(groups);
+    } catch (error: any) {
+      return reply.status(400).send({ message: error.message });
+    }
+  }
+
+  async toggleGroupStatus(request: FastifyRequest, reply: FastifyReply) {
+    const repo = new GroupRepository(db);
+    const useCase = new ToggleGroupStatusUseCase(repo);
+
+    try {
+      const data = toggleGroupStatusSchema.parse(request.body);
+      await useCase.execute(data);
+
+      const user = request.user as { id: string };
+      await logAction(user.id, `Atualizou o status do grupo ID ${data.groupId}`);      
+
+      return reply.status(200).send({ message: `Grupo ${data.isActive ? 'ativado' : 'desativado'} com sucesso.` });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
+      
+      return reply.status(400).send({ message: error.message });
+    }
+  }  
 }

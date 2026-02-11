@@ -13,8 +13,9 @@ const start = async () => {
     console.log(`
     🎯 API Meu Bolão Iniciada!
     🚀 URL: http://localhost:${port}
-    🔑 Rotas Públicas: /users/register, /auth/login
-    🛡️ Rotas Privadas: /championships, /teams, /groups, /matches, /users/promote-user, /predictions
+    🔑 Rotas Públicas: /users, /auth
+    🛡️ Rotas Privadas: /championships, /teams, /groups, /users, /predictions
+    🛡️ Rotas Administrativas (Prefix /admin): /championships, /teams, /groups, /matches, /users, /audit-logs
     `);
     
   } catch (err) {

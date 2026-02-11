@@ -4,11 +4,9 @@ import { MatchController } from '../../controllers';
 
 const matchController = new MatchController();
 
-export async function adminMatchRoutes(app: FastifyInstance) {
+export async function privateMatchRoutes(app: FastifyInstance) {
   // Todas as rotas aqui requerem autenticação e privilégio de admin
   app.addHook('preHandler', authenticate);
-  app.addHook('preHandler', checkAdmin);
 
-  app.post('/', matchController.createMatch);
-  app.patch('/:matchId/result', matchController.update);
+  app.get('/championship/:championshipId', matchController.listMatches);
 }

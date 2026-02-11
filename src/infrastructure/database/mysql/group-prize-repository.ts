@@ -2,7 +2,7 @@ import { GroupPrize } from "@/domain/entities";
 import { IGroupPrizeRepository } from "@/domain/repositories";
 import { Knex } from "knex";
 
-export class KnexGroupPrizeRepository implements IGroupPrizeRepository {
+export class GroupPrizeRepository implements IGroupPrizeRepository {
   constructor(private db: Knex) {}
 
   async save(prize: GroupPrize): Promise<void> {

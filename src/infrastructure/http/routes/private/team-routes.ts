@@ -4,10 +4,9 @@ import { TeamController } from '../../controllers';
 
 const teamController = new TeamController();
 
-export async function adminTeamRoutes(app: FastifyInstance) {
+export async function privateTeamRoutes(app: FastifyInstance) {
   app.addHook('preHandler', authenticate);
-  app.addHook('preHandler', checkAdmin);
 
   // Equipes
-  app.post('/', teamController.createTeam);
+  app.get('/championship/:championshipId', teamController.listTeamsByChampionship);
 }

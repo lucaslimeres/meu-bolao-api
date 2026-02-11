@@ -28,3 +28,8 @@ export const joinGroupSchema = z.object({
 export const groupIdParamsSchema = z.object({
   groupId: z.uuid("ID do grupo inválido")
 });
+
+export const toggleGroupStatusSchema = z.object({
+  groupId: z.uuid("ID de grupo inválido"),
+  isActive: z.boolean(),
+});

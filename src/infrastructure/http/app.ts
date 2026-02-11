@@ -1,8 +1,8 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
-import { authRoutes, championshipRoutes, groupRoutes, matchRoutes, predictionRoutes, privateUserRoutes, publicUserRoutes, teamRoutes } from './routes';
 import { ENVS } from '@/utils';
+import { adminAuditLogsRoutes, adminChampionshipRoutes, adminGroupRoutes, adminMatchRoutes, adminTeamRoutes, adminUserRoutes, privateGroupRoutes, privateMatchRoutes, privatePredictionRoutes, privateTeamRoutes, publicAuthRoutes, publicUserRoutes } from './routes';
 
 const app = fastify({ logger: true });
 
@@ -12,18 +12,22 @@ app.register(jwt, {
 });
 
 // PUBLICS ROUTES
-app.register(authRoutes, { prefix: '/auth' });
+app.register(publicAuthRoutes, { prefix: '/auth' });
 app.register(publicUserRoutes, { prefix: '/users' });
 
 // PRIVATE ROUTES
-app.register(groupRoutes, { prefix: '/groups' });
-app.register(predictionRoutes, { prefix: '/predictions' });
+app.register(privateGroupRoutes, { prefix: '/groups' });
+app.register(privatePredictionRoutes, { prefix: '/predictions' });
+app.register(privateMatchRoutes, { prefix: '/matches' });
+app.register(privateTeamRoutes, { prefix: '/teams' });
 
 // ADMIN ROUTES
-app.register(privateUserRoutes, { prefix: '/users' });
-app.register(championshipRoutes, { prefix: '/championships' });
-app.register(teamRoutes, { prefix: '/teams' });
-app.register(matchRoutes, { prefix: '/matches' });
+app.register(adminUserRoutes, { prefix: '/admin/users' });
+app.register(adminChampionshipRoutes, { prefix: '/admin/championships' });
+app.register(adminTeamRoutes, { prefix: '/admin/teams' });
+app.register(adminMatchRoutes, { prefix: '/admin/matches' });
+app.register(adminGroupRoutes, { prefix: '/admin/groups' });
+app.register(adminAuditLogsRoutes, { prefix: '/admin/audit-logs' });
 
 app.get('/health', async () => {
   return { status: 'OK', timestamp: new Date().toISOString() };

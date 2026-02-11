@@ -1,5 +1,5 @@
 import { IGroupRepository } from "@/domain/repositories";
-import { IWalletRepository } from "@/domain/repositories/wallet-repository";
+import { IWalletRepository } from "@/domain/repositories";
 
 interface JoinGroupRequest {
   userId: string;

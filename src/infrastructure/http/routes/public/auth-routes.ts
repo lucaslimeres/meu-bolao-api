@@ -3,6 +3,6 @@ import { AuthController } from '../../controllers';
 
 const authController = new AuthController();
 
-export async function authRoutes(app: FastifyInstance) {
+export async function publicAuthRoutes(app: FastifyInstance) {
   app.post('/login', authController.login);
 }

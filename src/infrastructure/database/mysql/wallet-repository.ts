@@ -1,4 +1,4 @@
-import { IWalletRepository } from "@/domain/repositories/wallet-repository";
+import { IWalletRepository } from "@/domain/repositories";
 import { Knex } from "knex";
 
 export class WalletRepository implements IWalletRepository {

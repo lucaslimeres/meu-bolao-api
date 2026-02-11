@@ -5,3 +5,5 @@ export * from './group-repository';
 export * from './match-repository';
 export * from './prediction-repository';
 export * from './wallet-repository';
+export * from './audit-log-repository';
+export * from './group-prize-repository';

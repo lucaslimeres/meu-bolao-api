@@ -4,6 +4,7 @@ import { db } from '../../database/connection';
 import { ChampionshipRepository, GroupRepository, PredictionRepository } from '@/infrastructure/database/mysql';
 import { CreateChampionshipUseCase, FinishChampionshipUseCase } from '@/application/use-cases';
 import { createChampionshipSchema, finishChampionshipParams } from '@/application/schemas';
+import { logAction } from '../middlewares/log-action-middleware';
 
 export class ChampionshipController {
   async createChampionship(request: FastifyRequest, reply: FastifyReply) {
@@ -15,6 +16,10 @@ export class ChampionshipController {
   
       const data = validatedData;
       const championship = await useCase.execute(data);
+
+      const user = request.user as { id: string };
+      await logAction(user.id, `Criou o campeonato de ID ${championship.id}`);
+
       return reply.status(201).send(championship);
     } catch (error: any) {
       if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });
@@ -38,6 +43,9 @@ export class ChampionshipController {
       const predictionRepo = new PredictionRepository(db);
       
       const useCase = new FinishChampionshipUseCase(champRepo, groupRepo, predictionRepo);
+
+      const user = request.user as { id: string };
+      await logAction(user.id, `Finalizou o campeonato de ID ${championshipId}`);      
 
       const result = await useCase.execute({ championshipId });
       return reply.status(200).send(result);

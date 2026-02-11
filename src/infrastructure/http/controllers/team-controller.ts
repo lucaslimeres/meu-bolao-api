@@ -4,6 +4,7 @@ import { db } from '../../database/connection';
 import { ChampionshipRepository, TeamRepository } from '@/infrastructure/database/mysql';
 import { CreateTeamUseCase } from '@/application/use-cases';
 import { createTeamSchema, listTeamSchema } from '@/application/schemas';
+import { logAction } from '../middlewares/log-action-middleware';
 
 export class TeamController {
   // Gestão de Equipes
@@ -22,6 +23,10 @@ export class TeamController {
       }
 
       const team = await useCase.execute({ name, badgeUrl, championshipId });
+
+      const user = request.user as { id: string };
+      await logAction(user.id, `Criou a equipe de ID ${team.id}`);
+
       return reply.status(201).send(team);
     } catch (error: any) {
       if (error instanceof z.ZodError) return reply.status(400).send({ errors: JSON.parse(error.message) });

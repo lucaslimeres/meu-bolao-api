@@ -14,4 +14,6 @@ export interface IGroupRepository {
     name: string;
     joinedAt: Date;
   }[]>;
+  listAll(): Promise<any[]>;
+  updateStatus(groupId: string, isActive: boolean): Promise<void>;  
 }
